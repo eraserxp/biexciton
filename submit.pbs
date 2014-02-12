@@ -1,0 +1,26 @@
+#PBS -S /bin/bash
+#PBS -N E_resonance
+#PBS -l nodes=1:ppn=6
+#PBS -l mem=5000mb
+export MKL_NUM_THREADS=6
+export OMP_NUM_THREADS=6
+echo $PBS_NODEFILE
+cat $PBS_NODEFILE
+
+echo "Remove trash"
+cd /tmp
+rm -rf *
+echo "Starting run at: `date`"
+cd $PBS_O_WORKDIR
+mkdir -p /tmp/E_resonance
+cp * /tmp/E_resonance/
+cd /tmp/E_resonance
+(time ./test) >& expand_time.out
+echo "The job has been completed."
+cd $PBS_O_WORKDIR 
+echo "Move the output to the working directory"
+cp -r /tmp/E_resonance/* .
+cd /tmp
+echo "Remove temporary files"
+rm -rf E_resonance
+echo "Program finished at: `date`"

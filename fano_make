@@ -1,0 +1,35 @@
+##  Makefile to make the programtest2.exe#FFLAGS = -O3 -132 -w
+MKLROOT =/global/software/intel/composerxe-2011.0.084/mkl
+MKLPATH=MKLROOT/lib/intel64
+MKLINCLUDE=MKLROOT/include
+
+F90 = ifort 
+FFLAGSB = -O4 -qhot -132 -w #-shared-intel -mcmodel=large  
+# dynamic linking, parallel
+#FFLAGSLIB = -lmkl_intel_lp64 -lmkl_intel_thread -lmkl_core -liomp5 -lpthread  
+
+# static linking, parallel
+#FFLAGSLIB =-Wl,--start-group /global/software/intel/composerxe-2011.0.084/mkl/lib/intel64/libmkl_lapack95_lp64.a /global/software/intel/composerxe-2011.0.084/mkl/lib/intel64/libmkl_intel_thread.a /global/software/intel/composerxe-2011.0.084/mkl/lib/intel64/libmkl_core.a -Wl,--end-group -liomp5 -lpthread  
+
+# link with lapack95 and lapack
+FFLAGSLIB = -I/global/software/intel/composerxe-2011.0.084/mkl/include/intel64/lp64 -lmkl_lapack95_lp64 -lmkl_blas95_lp64 -lmkl_intel_lp64 -lmkl_intel_thread -lmkl_core -liomp5 -lpthread 
+
+# dynamical linking, sequential
+#FFLAGSLIB=-lmkl_intel_lp64 -lmkl_sequential -lmkl_core -lpthread 
+
+# static linking, sequential
+#FFLAGSLIB =-Wl,--start-group /global/software/intel/composerxe-2011.0.084/mkl/lib/intel64/libmkl_intel_lp64.a /global/software/intel/composerxe-2011.0.084/mkl/lib/intel64/libmkl_sequential.a /global/software/intel/composerxe-2011.0.084/mkl/lib/intel64/libmkl_core.a -Wl,--end-group -lpthread
+
+# submit to feshbach
+##/global/software/intel/mkl/10.0.4.023/lib/em64t/libmkl_lapack.a -lguide -lpthread
+
+
+OBJECTSB= test.f module.f 
+
+test: $(OBJECTSB)
+	$(F90) $(FFLAGSB) -o test  $(OBJECTSB) $(FFLAGSLIB)
+# Tab before $(F90)$
+
+clean:
+	rm -f *.o test
+# Tab before "rm"
